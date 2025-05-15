@@ -1,22 +1,79 @@
 header {
   .navbar {
-    background-color:  #64748b ;
+    background: linear-gradient(90deg, #64748b, #4b5e7a);
     padding: 10px 20px;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between; /* Space between logo and actions */
     align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 
     .logo {
       color: #ffffff;
-      font-size: 24px;
+      font-size: 28px;
       font-family: 'Georgia', serif;
       font-weight: bold;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .navbar-actions {
+      display: flex;
+      gap: 10px; /* Space between multiple actions (if added) */
+
+      .action-btn.create {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #ffffff; /* White button for contrast */
+        color: #64748b; /* Text color matches navbar */
+        font-size: 14px;
+        text-decoration: none; /* Remove underline from link */
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: #f1f5f9; /* Tailwind slate-100 */
+          color: #4b5e7a; /* Slightly darker shade on hover */
+          transform: translateY(-1px);
+        }
+      }
+      .action-btn.list {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #ffffff; /* White button for contrast */
+        color: #64748b; /* Text color matches navbar */
+        font-size: 14px;
+        text-decoration: none; /* Remove underline from link */
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: #f1f5f9; /* Tailwind slate-100 */
+          color: #4b5e7a; /* Slightly darker shade on hover */
+          transform: translateY(-1px);
+        }
+      }
     }
   }
 }
 
-main {
-  padding: 20px;
+.main-container {
+  background: linear-gradient(180deg, #f9f9f9 0%, #ffffff 100%);
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border: 2px solid #e0e0e0;
+  overflow: hidden;
+  margin: 10px 0;
 }
 
 footer {
@@ -24,4 +81,10 @@ footer {
   padding: 10px;
   background-color: #f9f9f9;
   border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #666;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  bottom: 0;
+  width: 100%;
 }
