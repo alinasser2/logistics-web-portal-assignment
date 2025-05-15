@@ -1,12 +1,18 @@
 <header>
   <nav class="navbar">
     <div class="logo">Logistics</div>
+    <div class="navbar-actions">
+      <a (click)="navigateToCreate()" class="action-btn create">Create New Shipment</a>
+      <a (click)="navigateToShipments()" class="action-btn list">List Shipments</a>
+  </div>
   </nav>
 </header>
 
-<main>
-  <router-outlet></router-outlet>
-</main>
+<div class="main-container">
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>
 
 <footer>
   <p>© 2025 My Company</p>
