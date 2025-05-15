@@ -42,7 +42,8 @@ export class CreateShipmentComponent implements OnInit {
           setTimeout(() => this.router.navigate(['/shipments']), 2000); // Redirect after 2 seconds
         },
         error: (err) => {
-          this.error = err.message || 'Failed to create shipment.';
+          console.error();
+          this.error = err.error.errorResponse.message || 'Failed to create shipment.';
           this.success = '';
         }
       });
