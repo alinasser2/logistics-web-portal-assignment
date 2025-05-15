@@ -1,0 +1,30 @@
+<h2 class="section-title">All Shipments</h2>
+
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<table *ngIf="!loading && shipments.length > 0" class="shipments-table">
+  <thead>
+    <tr>
+      <th>Tracking ID</th>
+      <th>Phone</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let shipment of shipments">
+      <td>{{ shipment.trackingId }}</td>
+      <td>{{ shipment.phoneNumber }}</td>
+      <td>{{ shipment.description }}</td>
+      <td>{{ shipment.status }}</td>
+      <td>
+        <button *ngIf="shipment.status === 'Ready to Pick Up'" class="action-btn checkout">Checkout</button>
+        <button *ngIf="shipment.status === 'Out for Delivery'" class="action-btn deliver">Deliver</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p *ngIf="!loading && shipments.length === 0" class="no-data">No shipments found.</p>
