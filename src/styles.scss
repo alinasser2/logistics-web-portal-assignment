@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+// styles.scss (global styles)
+
+main {
+  padding: 20px 30px; /* Global padding for all content inside main */
+  margin: 20px 0; /* Global margin to give breathing room vertically */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  min-height: calc(100vh - 200px); /* Adjust based on your layout */
+  background-color: #f9f9f9; /* Light background for main content */
+}
