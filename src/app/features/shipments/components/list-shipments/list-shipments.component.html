@@ -1,7 +1,44 @@
 <h2 class="section-title">All Shipments</h2>
 
+<button class="action-btn create" (click)="toggleCreateForm()">
+  {{ showCreateForm ? 'Cancel' : 'Create New Shipment' }}
+</button>
+
+<div *ngIf="showCreateForm" class="create-form">
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+
+  <form [formGroup]="shipmentForm" (ngSubmit)="onCreateSubmit()" class="shipment-form">
+    <div class="form-group">
+      <label for="trackingId">Tracking ID</label>
+      <input id="trackingId" formControlName="trackingId" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('trackingId')?.touched && shipmentForm.get('trackingId')?.invalid" class="error-message">
+        Tracking ID is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number</label>
+      <input id="phoneNumber" formControlName="phoneNumber" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('phoneNumber')?.touched && shipmentForm.get('phoneNumber')?.invalid" class="error-message">
+        Valid Egyptian phone number (e.g., 0123456789 or +20123456789) is required.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input id="description" formControlName="description" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('description')?.touched && shipmentForm.get('description')?.invalid" class="error-message">
+        Description is required.
+      </div>
+    </div>
+
+    <button type="submit" class="action-btn submit" [disabled]="shipmentForm.invalid">Create Shipment</button>
+  </form>
+</div>
+
 <div *ngIf="loading" class="loading">Loading...</div>
-<div *ngIf="error" class="error">{{ error }}</div>
+<div *ngIf="error && !showCreateForm" class="error">{{ error }}</div>
 
 <table *ngIf="!loading && shipments.length > 0" class="shipments-table">
   <thead>
@@ -10,6 +47,7 @@
       <th>Phone</th>
       <th>Description</th>
       <th>Status</th>
+      <th>Timestamp</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -18,13 +56,62 @@
       <td>{{ shipment.trackingId }}</td>
       <td>{{ shipment.phoneNumber }}</td>
       <td>{{ shipment.description }}</td>
-      <td>{{ shipment.status }}</td>
       <td>
-        <button *ngIf="shipment.status === 'Ready to Pick Up'" class="action-btn checkout">Checkout</button>
-        <button *ngIf="shipment.status === 'Out for Delivery'" class="action-btn deliver">Deliver</button>
+        <span class="status-badge" [ngClass]="{
+          'ready-to-pick-up': shipment.status === 'Ready to Pick Up',
+          'out-for-delivery': shipment.status === 'Out for Delivery',
+          'delivered': shipment.status === 'Delivered'
+        }">
+          {{ shipment.status }}
+        </span>
+      </td>
+      <td>
+        {{ shipment.updatedAt ? (shipment.updatedAt | date:'MMM d, y, h:mm a') : (shipment.createdAt | date:'MMM d, y, h:mm a') }}
+      </td>
+      <td>
+        <button
+          *ngIf="shipment.status === 'Ready to Pick Up'"
+          class="action-btn checkout"
+          (click)="onCheckout(shipment.id)"
+        >
+          Checkout
+        </button>
+        <button
+          *ngIf="shipment.status === 'Out for Delivery'"
+          class="action-btn deliver"
+          (click)="onDeliver(shipment.id)"
+        >
+          Deliver
+        </button>
+        <button
+          class="action-btn delete"
+          (click)="onDelete(shipment.id)"
+        >
+          Delete
+        </button>
       </td>
     </tr>
   </tbody>
 </table>
+
+<div *ngIf="!loading && shipments.length > 0" class="pagination">
+  <button
+    class="pagination-btn"
+    [disabled]="currentPage === 1"
+    (click)="previousPage()"
+  >
+    Previous
+  </button>
+  <span class="pagination-info">
+    Page {{ currentPage }} of {{ totalPages }} ({{ totalItems }} items)
+  </span>
+  <button
+    class="pagination-btn"
+    [disabled]="currentPage === totalPages"
+    (click)="nextPage()"
+  >
+    Next
+  </button>
+</div>
 
 <p *ngIf="!loading && shipments.length === 0" class="no-data">No shipments found.</p>
