@@ -1,6 +1,8 @@
+// app.routes.ts
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout.component';
 import { ListShipmentsComponent } from './features/shipments/components/list-shipments/list-shipments.component';
+import { CreateShipmentComponent } from './features/shipments/components/create-shipment/create-shipment.component';
 
 export const routes: Routes = [
   {
@@ -15,6 +17,10 @@ export const routes: Routes = [
       {
         path: 'shipments',
         component: ListShipmentsComponent
+      },
+      {
+        path: 'shipments/new',
+        component: CreateShipmentComponent
       }
     ]
   }
