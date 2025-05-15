@@ -1,0 +1,41 @@
+<p>create-shipment works!</p>
+<h2 class="section-title">Create New Shipment</h2>
+
+<div *ngIf="error" class="error">{{ error }}</div>
+<div *ngIf="success" class="success">{{ success }}</div>
+
+<form [formGroup]="shipmentForm" (ngSubmit)="onSubmit()" class="shipment-form">
+  <div class="form-row">
+    <label for="trackingId">Tracking ID</label>
+    <div class="input-wrapper">
+      <input id="trackingId" formControlName="trackingId" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('trackingId')?.touched && shipmentForm.get('trackingId')?.invalid" class="error-message">
+        Tracking ID is required.
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="phoneNumber">Phone Number</label>
+    <div class="input-wrapper">
+      <input id="phoneNumber" formControlName="phoneNumber" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('phoneNumber')?.touched && shipmentForm.get('phoneNumber')?.invalid" class="error-message">
+        Valid Egyptian phone number (e.g., 0123456789 or +20123456789) is required.
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <label for="description">Description</label>
+    <div class="input-wrapper">
+      <input id="description" formControlName="description" type="text" class="form-control" />
+      <div *ngIf="shipmentForm.get('description')?.touched && shipmentForm.get('description')?.invalid" class="error-message">
+        Description is required.
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="action-btn submit" [disabled]="shipmentForm.invalid">Create Shipment</button>
+  </div>
+</form>
