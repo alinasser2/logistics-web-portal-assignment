@@ -1,0 +1,27 @@
+header {
+  .navbar {
+    background-color:  #64748b ;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    .logo {
+      color: #ffffff;
+      font-size: 24px;
+      font-family: 'Georgia', serif;
+      font-weight: bold;
+    }
+  }
+}
+
+main {
+  padding: 20px;
+}
+
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+}
