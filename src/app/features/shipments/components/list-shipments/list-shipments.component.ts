@@ -1,9 +1,23 @@
-// features/shipments/components/list-shipments/list-shipments.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ShipmentService } from '../../services/shipment.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { Observable, take } from 'rxjs';
 import { Shipment } from '../../models/shipment.model';
+import {
+  loadShipments,
+  createShipment,
+  checkoutShipment,
+  deliverShipment,
+  deleteShipment
+} from '../../store/shipments.actions';
+import {
+  selectAllShipments,
+  selectLoading,
+  selectError,
+  selectSuccess,
+  selectPagination
+} from '../../store/shipments.selectors';
 
 @Component({
   selector: 'app-list-shipments',
@@ -13,18 +27,20 @@ import { Shipment } from '../../models/shipment.model';
   styleUrls: ['./list-shipments.component.scss']
 })
 export class ListShipmentsComponent implements OnInit {
-  shipments: Shipment[] = [];
-  loading = true;
-  error = '';
-  currentPage = 1;
-  totalPages = 1;
-  pageSize = 10;
-  totalItems = 0;
-  showCreateForm = false; // Toggle for form visibility
-  shipmentForm: FormGroup;
-  success = '';
+  private fb = inject(FormBuilder);
+  private store = inject(Store);
 
-  constructor(private shipmentService: ShipmentService, private fb: FormBuilder) {
+  shipments$!: Observable<Shipment[]>;
+  loading$!: Observable<boolean>;
+  error$!: Observable<string | null>;
+  success$!: Observable<string | null>;
+  pagination$!: Observable<{ currentPage: number; totalPages: number; totalItems: number }>;
+
+  pageSize = 10;
+  showCreateForm = false;
+  shipmentForm: FormGroup;
+
+  constructor() {
     this.shipmentForm = this.fb.group({
       trackingId: ['', [Validators.required, Validators.minLength(1)]],
       phoneNumber: ['', [Validators.required, this.egyptPhoneNumberValidator()]],
@@ -33,114 +49,75 @@ export class ListShipmentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchShipments();
+    this.shipments$ = this.store.select(selectAllShipments);
+    this.loading$ = this.store.select(selectLoading);
+    this.error$ = this.store.select(selectError);
+    this.success$ = this.store.select(selectSuccess);
+    this.pagination$ = this.store.select(selectPagination);
+    this.store.dispatch(loadShipments({ page: 1, limit: this.pageSize }));
+    this.logState();
   }
 
-  fetchShipments(page: number = this.currentPage) {
-    this.loading = true;
-    this.currentPage = page;
-    this.shipmentService.getAllShipments(this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        this.shipments = response.items;
-        this.totalPages = response.meta.lastPage;
-        this.totalItems = response.meta.total;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load shipments.';
-        this.loading = false;
-      }
-    });
+  logState() {
+    this.store
+      .select(state => state.shipments)
+      .pipe(take(1))
+      .subscribe(state => {
+        console.log('Shipments State:', state);
+      });
   }
 
   onCheckout(shipmentId: string) {
-    this.shipmentService.checkoutShipment(shipmentId).subscribe({
-      next: (updatedShipment) => {
-        const index = this.shipments.findIndex(s => s.id === updatedShipment.id);
-        if (index !== -1) {
-          this.shipments[index] = updatedShipment;
-          this.shipments = [...this.shipments];
-        }
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to checkout shipment.';
-      }
-    });
+    this.store.dispatch(checkoutShipment({ shipmentId }));
+    this.logState();
   }
 
   onDeliver(shipmentId: string) {
-    this.shipmentService.deliverShipment(shipmentId).subscribe({
-      next: (updatedShipment) => {
-        const index = this.shipments.findIndex(s => s.id === updatedShipment.id);
-        if (index !== -1) {
-          this.shipments[index] = updatedShipment;
-          this.shipments = [...this.shipments];
-        }
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to deliver shipment.';
-      }
-    });
+    this.store.dispatch(deliverShipment({ shipmentId }));
+    this.logState();
   }
 
   onDelete(shipmentId: string) {
-    this.shipmentService.deleteShipment(shipmentId).subscribe({
-      next: () => {
-        this.fetchShipments();
-      },
-      error: (err) => {
-        this.error = err.message || 'Failed to delete shipment.';
+    this.store.dispatch(deleteShipment({ shipmentId }));
+    this.logState();
+  }
+
+  goToPage(page: number) {
+    this.store.dispatch(loadShipments({ page, limit: this.pageSize }));
+  }
+
+  previousPage() {
+    this.pagination$.pipe(take(1)).subscribe(({ currentPage }) => {
+      if (currentPage > 1) {
+        this.goToPage(currentPage - 1);
       }
     });
   }
 
-  goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.fetchShipments(page);
-    }
-  }
-
-  previousPage() {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
-    }
-  }
-
   nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
-    }
+    this.pagination$.pipe(take(1)).subscribe(({ currentPage, totalPages }) => {
+      if (currentPage < totalPages) {
+        this.goToPage(currentPage + 1);
+      }
+    });
   }
 
   toggleCreateForm() {
     this.showCreateForm = !this.showCreateForm;
     if (this.showCreateForm) {
-      this.success = ''; // Clear success message when opening form
-      this.error = ''; // Clear error message when opening form
+      this.shipmentForm.reset();
     }
   }
 
   onCreateSubmit() {
     if (this.shipmentForm.valid) {
       const shipmentData = this.shipmentForm.value;
-      this.shipmentService.createShipment(shipmentData).subscribe({
-        next: () => {
-          this.success = 'Shipment created successfully!';
-          this.error = '';
-          this.shipmentForm.reset();
-          this.fetchShipments(); // Refresh the list
-          this.showCreateForm = false; // Collapse the form
-        },
-        error: (err) => {
-          this.error = err.message || 'Failed to create shipment.';
-          this.success = '';
-        }
-      });
+      this.store.dispatch(createShipment({ shipmentData }));
+      this.showCreateForm = false;
     }
   }
 
-  // Custom validator for Egyptian phone numbers (e.g., 01XXXXXXXXX or +20XXXXXXXXXX)
-  egyptPhoneNumberValidator() {
+  private egyptPhoneNumberValidator() {
     return (control: any) => {
       const phoneNumber = control.value;
       const egyptPhoneRegex = /^(?:\+20|0)?1[0125][0-9]{8}$/;
