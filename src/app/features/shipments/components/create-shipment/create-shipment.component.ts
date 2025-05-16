@@ -1,9 +1,11 @@
-// features/shipments/create-shipment.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ShipmentService } from '../../services/shipment.service';
+import { Store } from '@ngrx/store';
+import { Observable, take } from 'rxjs';
 import { Router } from '@angular/router';
+import { createShipment } from '../../store/shipments.actions';
+import { selectError, selectSuccess } from '../../store/shipments.selectors';
 
 @Component({
   selector: 'app-create-shipment',
@@ -13,15 +15,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./create-shipment.component.scss']
 })
 export class CreateShipmentComponent implements OnInit {
-  shipmentForm: FormGroup;
-  error = '';
-  success = '';
+  private fb = inject(FormBuilder);
+  private store = inject(Store);
+  private router = inject(Router);
 
-  constructor(
-    private fb: FormBuilder,
-    private shipmentService: ShipmentService,
-    private router: Router
-  ) {
+  shipmentForm: FormGroup;
+  error$!: Observable<string | null>;
+  success$!: Observable<string | null>;
+
+  constructor() {
     this.shipmentForm = this.fb.group({
       trackingId: ['', [Validators.required, Validators.minLength(1)]],
       phoneNumber: ['', [Validators.required, this.egyptPhoneNumberValidator()]],
@@ -29,24 +31,32 @@ export class CreateShipmentComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Initialize selectors
+    this.error$ = this.store.select(selectError);
+    this.success$ = this.store.select(selectSuccess);
+  }
 
   onSubmit() {
     if (this.shipmentForm.valid) {
       const shipmentData = this.shipmentForm.value;
-      this.shipmentService.createShipment(shipmentData).subscribe({
-        next: () => {
-          this.success = 'Shipment created successfully!';
-          this.error = '';
+      // Dispatch createShipment action
+      this.store.dispatch(createShipment({ shipmentData }));
+      // Subscribe to success$ to handle success case
+      this.success$.pipe(take(1)).subscribe((success) => {
+        if (success) {
           this.shipmentForm.reset();
           setTimeout(() => this.router.navigate(['/shipments']), 2000); // Redirect after 2 seconds
-        },
-        error: (err) => {
-          console.error();
-          this.error = err.error.errorResponse.message || 'Failed to create shipment.';
-          this.success = '';
         }
       });
+      // Subscribe to error$ to handle error case (optional, can also be handled in template)
+      this.error$.pipe(take(1)).subscribe((error) => {
+        if (error) {
+          console.error('Shipment creation error:', error);
+        }
+      });
+    } else {
+      this.shipmentForm.markAllAsTouched();
     }
   }
 
