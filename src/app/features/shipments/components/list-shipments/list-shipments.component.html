@@ -1,147 +1,194 @@
 <!-- features/shipments/components/list-shipments/list-shipments.component.html -->
 <div class="shipments-container">
-  <h2>Shipments</h2>
-
-  <!-- Success Message -->
-  <ng-container *ngIf="success$ | async as success">
-    <div class="alert alert-success" *ngIf="success">{{ success }}</div>
-  </ng-container>
-
-  <!-- Error Message -->
-  <ng-container *ngIf="error$ | async as error">
-    <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
-  </ng-container>
-
-  <!-- Create Shipment Button -->
-  <button class="btn btn-primary mb-3" (click)="toggleCreateForm()">
-    {{ showCreateForm ? 'Cancel' : 'Create Shipment' }}
-  </button>
-
-  <!-- Create Shipment Form -->
-  <div class="create-form" *ngIf="showCreateForm">
-    <form [formGroup]="shipmentForm" (ngSubmit)="onCreateSubmit()">
-      <div class="form-group">
-        <label for="trackingId">Tracking ID</label>
-        <input
-          id="trackingId"
-          formControlName="trackingId"
-          class="form-control"
-          [class.is-invalid]="shipmentForm.get('trackingId')?.invalid && shipmentForm.get('trackingId')?.touched"
-        />
-        <div
-          class="invalid-feedback"
-          *ngIf="shipmentForm.get('trackingId')?.hasError('required') && shipmentForm.get('trackingId')?.touched"
-        >
-          Tracking ID is required.
-        </div>
+  <div class="header-section">
+    <h2 class="page-title">Shipments Management</h2>
+    
+    <!-- Success Message -->
+    <ng-container *ngIf="success$ | async as success">
+      <div class="alert alert-success" *ngIf="success">
+        <i class="icon-check"></i> {{ success }}
       </div>
+    </ng-container>
 
-      <div class="form-group">
-        <label for="phoneNumber">Phone Number</label>
-        <input
-          id="phoneNumber"
-          formControlName="phoneNumber"
-          class="form-control"
-          [class.is-invalid]="shipmentForm.get('phoneNumber')?.invalid && shipmentForm.get('phoneNumber')?.touched"
-        />
-        <div
-          class="invalid-feedback"
-          *ngIf="shipmentForm.get('phoneNumber')?.hasError('required') && shipmentForm.get('phoneNumber')?.touched"
-        >
-          Phone number is required.
-        </div>
-        <div
-          class="invalid-feedback"
-          *ngIf="shipmentForm.get('phoneNumber')?.hasError('invalidPhoneNumber') && shipmentForm.get('phoneNumber')?.touched"
-        >
-          Please enter a valid Egyptian phone number.
-        </div>
+    <!-- Error Message -->
+    <ng-container *ngIf="error$ | async as error">
+      <div class="alert alert-danger" *ngIf="error">
+        <i class="icon-warning"></i> {{ error }}
       </div>
+    </ng-container>
+  </div>
 
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          formControlName="description"
-          class="form-control"
-          [class.is-invalid]="shipmentForm.get('description')?.invalid && shipmentForm.get('description')?.touched"
-        ></textarea>
-        <div
-          class="invalid-feedback"
-          *ngIf="shipmentForm.get('description')?.hasError('required') && shipmentForm.get('description')?.touched"
-        >
-          Description is required.
+  <div class="action-section">
+    <!-- Create Shipment Button -->
+    <button class="btn btn-primary create-btn" (click)="toggleCreateForm()">
+      <i class="icon-plus"></i> {{ showCreateForm ? 'Cancel' : 'Create Shipment' }}
+    </button>
+
+    <!-- Create Shipment Form -->
+    <div class="create-form-container" *ngIf="showCreateForm">
+      <form [formGroup]="shipmentForm" (ngSubmit)="onCreateSubmit()" class="shipment-form">
+        <h3 class="form-title">New Shipment</h3>
+        
+        <div class="form-group">
+          <label for="trackingId">Tracking ID</label>
+          <div class="input-with-icon">
+            <i class="icon-barcode"></i>
+            <input
+              id="trackingId"
+              formControlName="trackingId"
+              class="form-control"
+              placeholder="Enter tracking ID"
+              [class.is-invalid]="shipmentForm.get('trackingId')?.invalid && shipmentForm.get('trackingId')?.touched"
+            />
+          </div>
+          <div class="invalid-feedback" *ngIf="shipmentForm.get('trackingId')?.hasError('required') && shipmentForm.get('trackingId')?.touched">
+            Tracking ID is required.
+          </div>
         </div>
-      </div>
 
-      <button type="submit" class="btn btn-success" [disabled]="shipmentForm.invalid">Create Shipment</button>
-    </form>
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <div class="input-with-icon">
+            <i class="icon-phone"></i>
+            <input
+              id="phoneNumber"
+              formControlName="phoneNumber"
+              class="form-control"
+              placeholder="Enter Egyptian phone number"
+              [class.is-invalid]="shipmentForm.get('phoneNumber')?.invalid && shipmentForm.get('phoneNumber')?.touched"
+            />
+          </div>
+          <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('required') && shipmentForm.get('phoneNumber')?.touched">
+            Phone number is required.
+          </div>
+          <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('invalidPhoneNumber') && shipmentForm.get('phoneNumber')?.touched">
+            Please enter a valid Egyptian phone number (e.g., 01XXXXXXXXX).
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <div class="input-with-icon">
+            <i class="icon-document"></i>
+            <textarea
+              id="description"
+              formControlName="description"
+              class="form-control"
+              placeholder="Enter shipment description"
+              rows="3"
+              [class.is-invalid]="shipmentForm.get('description')?.invalid && shipmentForm.get('description')?.touched"
+            ></textarea>
+          </div>
+          <div class="invalid-feedback" *ngIf="shipmentForm.get('description')?.hasError('required') && shipmentForm.get('description')?.touched">
+            Description is required.
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-btn" [disabled]="shipmentForm.invalid">
+            <i class="icon-save"></i> Create Shipment
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Loading Indicator -->
-  <div class="loading" *ngIf="loading$ | async">Loading shipments...</div>
+  <div class="loading-container" *ngIf="loading$ | async">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading shipments...</div>
+  </div>
 
   <!-- Shipments Table -->
-  <table class="table table-striped" *ngIf="!(loading$ | async) && (shipments$ | async)?.length">
-    <thead>
-      <tr>
-        <th>Tracking ID</th>
-        <th>Phone Number</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let shipment of shipments$ | async">
-        <td>{{ shipment.trackingId }}</td>
-        <td>{{ shipment.phoneNumber }}</td>
-        <td>{{ shipment.description }}</td>
-        <td>{{ shipment.status }}</td>
-        <td>{{ shipment.createdAt | date: 'medium' }}</td>
-        <td>
-          <button
-            class="btn btn-sm btn-warning mr-2"
-            (click)="onCheckout(shipment.id)"
-            [disabled]="shipment.status !== 'Ready to Pick Up'"
-          >
-            Checkout
-          </button>
-          <button
-            class="btn btn-sm btn-success mr-2"
-            (click)="onDeliver(shipment.id)"
-            [disabled]="shipment.status !== 'Out for Delivery'"
-          >
-            Deliver
-          </button>
-          <button class="btn btn-sm btn-danger" (click)="onDelete(shipment.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive" *ngIf="!(loading$ | async) && (shipments$ | async)?.length">
+    <table class="shipments-table">
+      <thead>
+        <tr>
+          <th>Tracking ID</th>
+          <th>Phone Number</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let shipment of shipments$ | async">
+          <td>
+            <span class="tracking-id">{{ shipment.trackingId }}</span>
+          </td>
+          <td>{{ shipment.phoneNumber }}</td>
+          <td class="description-cell">{{ shipment.description }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="shipment.status">
+              {{ shipment.status }}
+            </span>
+          </td>
+          <td>{{ shipment.createdAt | date: 'medium' }}</td>
+          <td class="actions-cell">
+            <div class="btn-group">
+              <button
+                class="btn btn-sm btn-warning action-btn checkout"
+                (click)="onCheckout(shipment.id)"
+                [disabled]="shipment.status !== 'Ready to Pick Up'"
+                title="Checkout"
+              >
+                <i class="icon-cart"></i>
+              </button>
+              <button
+                class="btn btn-sm btn-success action-btn deliver"
+                (click)="onDeliver(shipment.id)"
+                [disabled]="shipment.status !== 'Out for Delivery'"
+                title="Deliver"
+              >
+                <i class="icon-truck"></i>
+              </button>
+              <button 
+                class="btn btn-sm btn-danger action-btn delete" 
+                (click)="onDelete(shipment.id)"
+                title="Delete"
+              >
+                <i class="icon-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- No Shipments Message -->
-  <div *ngIf="!(loading$ | async) && !(shipments$ | async)?.length" class="alert alert-info">
-    No shipments found.
+  <div class="empty-state" *ngIf="!(loading$ | async) && !(shipments$ | async)?.length">
+    <div class="empty-icon">
+      <i class="icon-package"></i>
+    </div>
+    <h3>No Shipments Found</h3>
+    <p>There are currently no shipments available. Create a new shipment to get started.</p>
+    <button class="btn btn-primary" (click)="toggleCreateForm()">
+      <i class="icon-plus"></i> Create Shipment
+    </button>
   </div>
 
   <!-- Pagination -->
-  <div class="pagination" *ngIf="pagination$ | async as pagination">
-    <button
-      class="btn btn-secondary mr-2"
-      (click)="previousPage()"
-      [disabled]="pagination.currentPage === 1"
-    >
-      Previous
-    </button>
-    <span>Page {{ pagination.currentPage }} of {{ pagination.totalPages }}</span>
-    <button
-      class="btn btn-secondary ml-2"
-      (click)="nextPage()"
-      [disabled]="pagination.currentPage === pagination.totalPages"
-    >
-      Next
-    </button>
+  <div class="pagination-container" *ngIf="pagination$ | async as pagination">
+    <div class="pagination-info">
+      Showing page {{ pagination.currentPage }} of {{ pagination.totalPages }}
+    </div>
+    <div class="pagination-controls">
+      <button
+        class="btn btn-secondary pagination-btn"
+        (click)="previousPage()"
+        [disabled]="pagination.currentPage === 1"
+      >
+        <i class="icon-chevron-left"></i> Previous
+      </button>
+      <button
+        class="btn btn-secondary pagination-btn"
+        (click)="nextPage()"
+        [disabled]="pagination.currentPage === pagination.totalPages"
+      >
+        Next <i class="icon-chevron-right"></i>
+      </button>
+    </div>
   </div>
 </div>
