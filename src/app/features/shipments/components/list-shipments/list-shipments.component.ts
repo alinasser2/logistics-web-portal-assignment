@@ -55,31 +55,20 @@ export class ListShipmentsComponent implements OnInit {
     this.success$ = this.store.select(selectSuccess);
     this.pagination$ = this.store.select(selectPagination);
     this.store.dispatch(loadShipments({ page: 1, limit: this.pageSize }));
-    this.logState();
   }
 
-  logState() {
-    this.store
-      .select(state => state.shipments)
-      .pipe(take(1))
-      .subscribe(state => {
-        console.log('Shipments State:', state);
-      });
-  }
+
 
   onCheckout(shipmentId: string) {
     this.store.dispatch(checkoutShipment({ shipmentId }));
-    this.logState();
   }
 
   onDeliver(shipmentId: string) {
     this.store.dispatch(deliverShipment({ shipmentId }));
-    this.logState();
   }
 
   onDelete(shipmentId: string) {
     this.store.dispatch(deleteShipment({ shipmentId }));
-    this.logState();
   }
 
   goToPage(page: number) {
