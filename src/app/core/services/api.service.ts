@@ -84,9 +84,10 @@ export class ApiService {
       errorMessage = `Client error: ${error.error.message}`;
     } else {
       // Server-side error
-      errorMessage = `Server error: ${error.status} - ${error.message}`;
+      console.log('Server error:', error);
+      errorMessage = error.error.errorResponse.message;
     }
-    console.error(errorMessage);
+    console.error(error.error.errorResponse.message);
     return throwError(() => new Error(errorMessage));
   }
 }
