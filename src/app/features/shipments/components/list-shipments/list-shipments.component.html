@@ -24,73 +24,78 @@
       <i class="icon-plus"></i> {{ showCreateForm ? 'Cancel' : 'Create Shipment' }}
     </button>
 
-    <!-- Create Shipment Form -->
-    <div class="create-form-container" *ngIf="showCreateForm">
-      <form [formGroup]="shipmentForm" (ngSubmit)="onCreateSubmit()" class="shipment-form">
-        <h3 class="form-title">New Shipment</h3>
-        
-        <div class="form-group">
-          <label for="trackingId">Tracking ID<span class="required">*</span></label>
-          <div class="input-with-icon">
-            <i class="icon-barcode"></i>
-            <input
-              id="trackingId"
-              formControlName="trackingId"
-              class="form-control"
-              placeholder="Enter tracking ID"
-              [class.is-invalid]="shipmentForm.get('trackingId')?.invalid && shipmentForm.get('trackingId')?.touched"
-            />
-          </div>
-          <div class="invalid-feedback" *ngIf="shipmentForm.get('trackingId')?.hasError('required') && shipmentForm.get('trackingId')?.touched">
-            Tracking ID is required.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="phoneNumber">Phone Number</label>
-          <div class="input-with-icon">
-            <i class="icon-phone"></i>
-            <input
-              id="phoneNumber"
-              formControlName="phoneNumber"
-              class="form-control"
-              placeholder="Enter Egyptian phone number"
-              [class.is-invalid]="shipmentForm.get('phoneNumber')?.invalid && shipmentForm.get('phoneNumber')?.touched"
-            />
-          </div>
-          <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('required') && shipmentForm.get('phoneNumber')?.touched">
-            Phone number is required.
-          </div>
-          <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('invalidPhoneNumber') && shipmentForm.get('phoneNumber')?.touched">
-            Please enter a valid Egyptian phone number (e.g., 01XXXXXXXXX).
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="description">Description</label>
-          <div class="input-with-icon">
-            <i class="icon-document"></i>
-            <textarea
-              id="description"
-              formControlName="description"
-              class="form-control"
-              placeholder="Enter shipment description"
-              rows="3"
-              [class.is-invalid]="shipmentForm.get('description')?.invalid && shipmentForm.get('description')?.touched"
-            ></textarea>
-          </div>
-          <div class="invalid-feedback" *ngIf="shipmentForm.get('description')?.hasError('required') && shipmentForm.get('description')?.touched">
-            Description is required.
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="submit-btn" [disabled]="shipmentForm.invalid">
-            <i class="icon-save"></i> Create Shipment
-          </button>
-        </div>
-      </form>
+<div class="create-form-container" *ngIf="showCreateForm">
+  <form [formGroup]="shipmentForm" (ngSubmit)="onCreateSubmit()" class="shipment-form">
+    <h3 class="form-title">New Shipment</h3>
+    
+    <div class="form-group">
+      <label for="trackingId">Tracking ID<span class="required">*</span></label>
+      <div class="input-with-icon">
+        <i class="icon-barcode"></i>
+        <input
+          id="trackingId"
+          formControlName="trackingId"
+          class="form-control"
+          placeholder="Enter tracking ID"
+          [class.is-invalid]="shipmentForm.get('trackingId')?.invalid && (shipmentForm.get('trackingId')?.touched || shipmentForm.get('trackingId')?.dirty)"
+        />
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('trackingId')?.hasError('required') && (shipmentForm.get('trackingId')?.touched || shipmentForm.get('trackingId')?.dirty)">
+        Tracking ID is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('trackingId')?.hasError('minlength') && (shipmentForm.get('trackingId')?.touched || shipmentForm.get('trackingId')?.dirty)">
+        Tracking ID must be at least 1 character long.
+      </div>
     </div>
+
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number<span class="required">*</span></label>
+      <div class="input-with-icon">
+        <i class="icon-phone"></i>
+        <input
+          id="phoneNumber"
+          formControlName="phoneNumber"
+          class="form-control"
+          placeholder="Enter Egyptian phone number (e.g., 01XXXXXXXXX)"
+          [class.is-invalid]="shipmentForm.get('phoneNumber')?.invalid && (shipmentForm.get('phoneNumber')?.touched || shipmentForm.get('phoneNumber')?.dirty)"
+        />
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('required') && (shipmentForm.get('phoneNumber')?.touched || shipmentForm.get('phoneNumber')?.dirty)">
+        Phone number is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('phoneNumber')?.hasError('invalidPhoneNumber') && (shipmentForm.get('phoneNumber')?.touched || shipmentForm.get('phoneNumber')?.dirty)">
+        Please enter a valid Egyptian phone number (e.g., 01XXXXXXXXX).
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description<span class="required">*</span></label>
+      <div class="input-with-icon">
+        <i class="icon-document"></i>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+          placeholder="Enter shipment description"
+          rows="3"
+          [class.is-invalid]="shipmentForm.get('description')?.invalid && (shipmentForm.get('description')?.touched || shipmentForm.get('description')?.dirty)"
+        ></textarea>
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('description')?.hasError('required') && (shipmentForm.get('description')?.touched || shipmentForm.get('description')?.dirty)">
+        Description is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="shipmentForm.get('description')?.hasError('minlength') && (shipmentForm.get('description')?.touched || shipmentForm.get('description')?.dirty)">
+        Description must be at least 1 character long.
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn" [disabled]="shipmentForm.invalid && !shipmentForm.touched">
+        <i class="icon-save"></i> Create Shipment
+      </button>
+    </div>
+  </form>
+</div>
   </div>
 
   <!-- Loading Indicator -->
