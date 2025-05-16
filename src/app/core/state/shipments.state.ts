@@ -1,11 +1,10 @@
-// features/shipments/store/shipments.state.ts
 import { Shipment } from '../../features/shipments/models/shipment.model';
 
 export interface ShipmentsState {
   shipments: Shipment[];
   loading: boolean;
   error: string | null;
-  success: string | null; // Added for success messages
+  success: string | null; 
   currentPage: number;
   totalPages: number;
   totalItems: number;

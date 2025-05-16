@@ -1,4 +1,3 @@
-// features/shipments/store/shipments.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import * as ShipmentsActions from './shipments.actions';
 import { initialShipmentsState } from '../../../core/state/shipments.state';
@@ -40,7 +39,7 @@ export const shipmentsReducer = createReducer(
   on(ShipmentsActions.createShipmentSuccess, (state, { shipment }) => ({
     ...state,
     loading: false,
-    shipments: [shipment, ...state.shipments], // Add new shipment to the list
+    shipments: [shipment, ...state.shipments],
     success: 'Shipment created successfully!',
     error: null
   })),

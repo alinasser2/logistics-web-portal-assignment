@@ -9,8 +9,8 @@ interface HttpOptions {
   params?: HttpParams | { [param: string]: string | number | boolean };
 }
 
-// Environment configuration (replace with your actual environment setup)
-const API_BASE_URL = 'http://localhost:3000'; // Update with your API base URL
+// Environment configuration (replace with actual environment setup)
+const API_BASE_URL = 'http://localhost:3000';
 
 @Injectable({
   providedIn: 'root'
@@ -84,10 +84,8 @@ export class ApiService {
       errorMessage = `Client error: ${error.error.message}`;
     } else {
       // Server-side error
-      console.log('Server error:', error);
-      errorMessage = error.error.errorResponse.message;
+      errorMessage = error.error.errorResponse.message || 'Unknown server error';
     }
-    console.error(error.error.errorResponse.message);
     return throwError(() => new Error(errorMessage));
   }
 }

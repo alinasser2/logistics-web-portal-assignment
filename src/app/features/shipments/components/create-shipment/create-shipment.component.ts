@@ -32,7 +32,6 @@ export class CreateShipmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialize selectors
     this.error$ = this.store.select(selectError);
     this.success$ = this.store.select(selectSuccess);
   }
