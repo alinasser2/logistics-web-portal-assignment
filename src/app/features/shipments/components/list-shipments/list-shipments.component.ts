@@ -102,9 +102,17 @@ export class ListShipmentsComponent implements OnInit {
     if (this.shipmentForm.valid) {
       const shipmentData = this.shipmentForm.value;
       this.store.dispatch(createShipment({ shipmentData }));
-      this.showCreateForm = false;
+      this.success$.pipe(take(1)).subscribe((success) => {
+        if (success) {
+          this.shipmentForm.reset();
+          this.showCreateForm = false;
+        }
+      });
+    } else {
+      this.shipmentForm.markAllAsTouched();
     }
   }
+
 
   private egyptPhoneNumberValidator() {
     return (control: any) => {
