@@ -94,8 +94,9 @@ export class ShipmentService {
   createShipment(shipmentData: { trackingId: string; phoneNumber: string; description: string }): Observable<any> {
     return this.apiService.post<any>(this.endpoint, shipmentData).pipe(
       map((response) => {
+        console.log('asdasdasd', response);
         if (response.statusCode !== 200 && response.statusCode !== 201) {
-          throw new Error(response.message || 'Failed to create shipment');
+          throw new Error(response || 'Failed to create shipment');
         }
         return response;
       })
