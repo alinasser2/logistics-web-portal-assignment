@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment.example';
 
 // Interface for optional HTTP options
 interface HttpOptions {
@@ -10,7 +11,7 @@ interface HttpOptions {
 }
 
 // Environment configuration (replace with actual environment setup)
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = environment.apiBaseUrl;
 
 @Injectable({
   providedIn: 'root'
