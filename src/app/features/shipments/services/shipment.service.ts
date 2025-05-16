@@ -1,8 +1,8 @@
-// features/shipments/services/shipment.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
+import { ApiService } from '../../../core/services/api.service';
 import { Shipment } from '../models/shipment.model';
+import { HttpParams } from '@angular/common/http';
 
 interface PaginationMeta {
   total: number;
@@ -20,16 +20,22 @@ interface ShipmentsResponse {
   providedIn: 'root'
 })
 export class ShipmentService {
-  private readonly baseUrl = 'http://localhost:3000/shipments';
+  private readonly endpoint = '/shipments'; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
+  /**
+   * Get all shipments with pagination
+   * @param page Page number (default: 1)
+   * @param limit Items per page (default: 10)
+   * @returns Observable of ShipmentsResponse
+   */
   getAllShipments(page: number = 1, limit: number = 10): Observable<ShipmentsResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());
 
-    return this.http.get<any>(`${this.baseUrl}/`, { params }).pipe(
+    return this.apiService.get<any>(this.endpoint, { params }).pipe(
       map((response) => ({
         items: response.data.items,
         meta: response.data.meta
@@ -37,8 +43,13 @@ export class ShipmentService {
     );
   }
 
+  /**
+   * Checkout a shipment
+   * @param id Shipment ID
+   * @returns Observable of updated Shipment
+   */
   checkoutShipment(id: string): Observable<Shipment> {
-    return this.http.patch<any>(`${this.baseUrl}/${id}/checkout`, {}).pipe(
+    return this.apiService.patch<any>(`${this.endpoint}/${id}/checkout`, {}).pipe(
       map((response) => {
         if (response.statusCode !== 200) {
           throw new Error(response.message || 'Failed to checkout shipment');
@@ -48,8 +59,13 @@ export class ShipmentService {
     );
   }
 
+  /**
+   * Deliver a shipment
+   * @param id Shipment ID
+   * @returns Observable of updated Shipment
+   */
   deliverShipment(id: string): Observable<Shipment> {
-    return this.http.patch<any>(`${this.baseUrl}/${id}/deliver`, {}).pipe(
+    return this.apiService.patch<any>(`${this.endpoint}/${id}/deliver`, {}).pipe(
       map((response) => {
         if (response.statusCode !== 200) {
           throw new Error(response.message || 'Failed to deliver shipment');
@@ -59,14 +75,24 @@ export class ShipmentService {
     );
   }
 
+  /**
+   * Delete a shipment
+   * @param id Shipment ID
+   * @returns Observable of void
+   */
   deleteShipment(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/shipments/${id}`).pipe(
+    return this.apiService.delete<void>(`${this.endpoint}/${id}`).pipe(
       map(() => {})
     );
   }
 
+  /**
+   * Create a new shipment
+   * @param shipmentData Shipment data
+   * @returns Observable of the API response
+   */
   createShipment(shipmentData: { trackingId: string; phoneNumber: string; description: string }): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/`, shipmentData).pipe(
+    return this.apiService.post<any>(this.endpoint, shipmentData).pipe(
       map((response) => {
         if (response.statusCode !== 200 && response.statusCode !== 201) {
           throw new Error(response.message || 'Failed to create shipment');
