@@ -1,7 +1,7 @@
 // features/shipments/store/shipments.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import * as ShipmentsActions from './shipments.actions';
-import { initialShipmentsState } from './shipments.state';
+import { initialShipmentsState } from '../../../core/state/shipments.state';
 
 export const shipmentsReducer = createReducer(
   initialShipmentsState,

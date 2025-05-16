@@ -1,6 +1,6 @@
 // features/shipments/store/shipments.selectors.ts
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { ShipmentsState } from './shipments.state';
+import { ShipmentsState } from '../../../core/state/shipments.state';
 
 export const selectShipmentsState = createFeatureSelector<ShipmentsState>('shipments');
 

@@ -1,5 +1,5 @@
 // features/shipments/store/shipments.state.ts
-import { Shipment } from '../models/shipment.model';
+import { Shipment } from '../../features/shipments/models/shipment.model';
 
 export interface ShipmentsState {
   shipments: Shipment[];
