@@ -4,14 +4,14 @@
     <p class="form-subtitle">Fill in the details below to create a new shipment</p>
   </div>
 
-  <div *ngIf="error" class="message error">
+  <div *ngIf="error$ | async as error" class="message error">
     <svg class="message-icon" viewBox="0 0 24 24">
       <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
     </svg>
     {{ error }}
   </div>
   
-  <div *ngIf="success" class="message success">
+  <div *ngIf="success$ | async as success" class="message success">
     <svg class="message-icon" viewBox="0 0 24 24">
       <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" />
     </svg>
@@ -26,7 +26,8 @@
         <svg viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
         </svg>
-        Tracking ID is required
+        <span *ngIf="shipmentForm.get('trackingId')?.errors?.['required']">Tracking ID is required</span>
+        <span *ngIf="shipmentForm.get('trackingId')?.errors?.['minlength']">Tracking ID must be at least 1 character</span>
       </div>
     </div>
 
@@ -37,7 +38,8 @@
         <svg viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
         </svg>
-        Valid Egyptian phone number is required
+        <span *ngIf="shipmentForm.get('phoneNumber')?.errors?.['required']">Phone number is required</span>
+        <span *ngIf="shipmentForm.get('phoneNumber')?.errors?.['invalidPhoneNumber']">Valid Egyptian phone number is required</span>
       </div>
     </div>
 
@@ -48,7 +50,8 @@
         <svg viewBox="0 0 24 24" width="16" height="16">
           <path fill="currentColor" d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
         </svg>
-        Description is required
+        <span *ngIf="shipmentForm.get('description')?.errors?.['required']">Description is required</span>
+        <span *ngIf="shipmentForm.get('description')?.errors?.['minlength']">Description must be at least 1 character</span>
       </div>
     </div>
 
